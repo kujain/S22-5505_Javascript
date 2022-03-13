@@ -268,3 +268,181 @@ function distance(lat1, lon1, lat2, lon2, unit) {
 	}
 }
 ```
+
+### Fetch GET
+```
+let button = document.getElementById('GetUsers');
+button.addEventListener("click", getUserData);
+
+function getUserData() {
+  let url = "https://reqres.in/api/users";
+    fetch(url)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(resp) {
+        console.log(resp);
+        document.getElementById("Output").innerHTML = JSON.stringify(resp.data);
+      })
+      .catch(function(resp) {
+        document.getElementById("Output").innerHTML = "There was an error";
+      });
+}
+```
+
+### Fetch POST
+```
+const form = document.getElementById('createUser')
+form.addEventListener("submit", saveUserData);
+
+function saveUserData(e) {
+	e.preventDefault();
+
+	const url = "https://reqres.in/api/users";
+	const FD  = new FormData(form);
+	FD.append("name",form.first_name.value + ' ' + form.last_name.value);
+	let jsonObject = {};
+	for (let pair  of FD.entries()) {
+			jsonObject[pair[0]] = pair[1];
+	}
+	console.log(jsonObject);
+	//console.log(req);
+	fetch(url, {
+		method: 'POST',
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(jsonObject)
+	})
+		.then(function(response) {
+				console.log(response.json());
+				return response.json();
+		})
+		.then(function(data) {
+				console.log('raw data',data);
+				document.getElementById("Output").innerHTML = "Successfully created id: "+data.id;
+		})
+		.catch(function(error) {
+				document.getElementById("Output").innerHTML = "Th1ere was an error "+error;
+		});
+}
+```
+
+### CLeaning up callback hell with Fetch
+```
+let button = document.getElementById('GetUsers');
+
+button.addEventListener("click", getUserData);
+
+function getUserData(e) {
+  e.preventDefault();
+
+  const url = "https://randomuser.me/api/?results=1";
+  const url2 = "http://api.open-notify.org/iss-now.json";
+
+  fetch(url)
+    .then(function(response) {
+        return response.json();
+    })
+    .then( function(data) {
+        console.log('raw data',data);
+        document.getElementById("Output").innerHTML = JSON.stringify(data.results[0]);
+        coords = data.results[0].location.coordinates;
+
+       return fetch(url2);
+    } )
+    .then( function(response) {
+        return response.json();
+    })
+    .then(function(resp) {
+        console.log('raw data',resp);
+        let iss = resp.iss_position;
+        document.getElementById("Output").innerHTML += `<br>ISS position is: ${iss.latitude} / ${iss.longitude}`;
+        let dist = distance( coords.latitude, coords.longitude, iss.latitude, iss.longitude);
+        document.getElementById("Output").innerHTML += `<br>Current distance between the two  is: ${dist} miles`;
+    })
+    .catch(function(error) {
+        document.getElementById("Output").innerHTML = "There was an error "+error;
+    });
+}
+```
+
+### Reworking the class exercise using Fetch
+```
+const button = document.getElementById('GetUsers');
+button.addEventListener("click", getUserData);
+
+function getUserData(e) {
+  e.preventDefault();
+
+  const url = 'https://randomuser.me/api/?results=10';
+  const ul = document.createElement('ul');
+
+  fetch(url)
+    .then(function(response) {
+        return response.json();
+    })
+    .then( function(data) {
+        console.log('raw data',data);
+
+        let authors = data.results; // Getresults
+        for (author of authors) { // loop through theresults
+            console.log(author);
+            let li = document.createElement('li'); //  Create theelements we need
+            let img = document.createElement('img');
+            let span = document.createElement('span');
+
+            img.src = author.picture.medium;  // Add the source ofthe image to be the src of the img element
+            span.innerHTML = author.name.first + ' ' +author.name.last; // Make the HTML of our span to be the firstand last name of our author
+            li.appendChild(img); // Append img element back tocontaining li
+            li.appendChild(span); // Append span element back tocontaining li
+            ul.appendChild(li); // Append li element back tocontaining ul
+            document.body.append(ul); //Append the new ul to body
+        }
+
+    } )
+    .catch(function(error) {
+        document.getElementById("Output").innerHTML = "There was an error "+error;
+    });
+}
+```
+
+### Using Async Await - flattens all calls within the same scope:
+```
+
+function xhrRequest( url ) {
+	return new Promise( function(resolve, reject) {
+		const xhr = new XMLHttpRequest();
+		xhr.open( 'GET', url, true );
+		xhr.send();
+		xhr.onload = function () {
+			if (xhr.status === 200) {
+				 console.log(url);
+				 const response = JSON.parse(xhr.responseText);
+					resolve(response);
+			} else {
+					const error = xhr.statusText || 'The reason is mysterious. Call Yoda!';
+					reject(error);
+			}
+		}
+
+	}
+)};
+
+const button = document.getElementById('GetUsers');
+button.addEventListener("click", processCall);
+
+async function processCall() {
+	// 1st step
+	const first_resp = await xhrRequest('https://randomuser.me/api/?results=1');
+	const name = first_resp.results[0].id.name;
+	const coords = first_resp.results[0].location.coordinates;
+	document.getElementById("Output").innerHTML = `${name} is located at ${coords.latitude} / ${coords.longitude} `;
+
+	// 2nd step
+	const second_resp = await xhrRequest('http://api.open-notify.org/iss-now.json');
+	const iss = second_resp.iss_position;
+	document.getElementById("Output").innerHTML += `<br>ISS position is: ${iss.latitude} / ${iss.longitude}`;
+	const dist = distance( coords.latitude, coords.longitude, iss.latitude, iss.longitude);
+	document.getElementById("Output").innerHTML += `<br>Current distance between the two  is: ${dist} miles`;
+}
+```
+
