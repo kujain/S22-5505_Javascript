@@ -197,3 +197,50 @@ try {
 console.log("Moving on...");
 ```
 
+### Converting the Ajax code to use OOP
+```
+const button = document.getElementById('GetUsers');
+button.addEventListener("click", getUserData);
+
+// main process
+function getUserData() {
+    let url = "https://randomuser.me/api/?results=10";
+    fetch(url)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(resp) {
+            document.getElementById("Output").innerHTML = JSON.stringify(resp.results);
+            buildUserData( resp.results );
+        })
+        .catch(function(error) {
+            document.getElementById("Output").innerHTML = "There was an error "+error;
+        });
+}
+
+// handlers
+function buildUserData(data) {
+  for( item of data ) {
+    const person = new Person(item);
+    const p_el = document.createElement('p');
+    p_el.innerHTML = person.render();
+    document.body.appendChild(p_el);
+  }
+}
+
+// Person model
+Person = function(item) {
+  this.first_name = item.name.first;
+  this.last_name = item.name.last;
+  this.image = item.picture.thumbnail;
+  this.getName = function() {
+    return this.first_name + " " + this.last_name;
+  }
+  this.getPicture = function() {
+    return this.image;
+  }
+  this.render = function() {
+    return `<a href=""><img src="${this.getPicture()}" /><br>${this.getName()}</a><br>`;
+  }
+}
+```
