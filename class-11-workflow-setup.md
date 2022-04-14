@@ -185,6 +185,8 @@ https://github.com/kujain/S22-5505_Javascript/blob/main/gulpfile-7.js
 Since this requires webpack, an additional webpack config file is required for it to handle the  bundling process.   Create a  webpack.config.js file and update its content from:
 https://github.com/kujain/S22-5505_Javascript/blob/main/webpack.config.js
 
+You also need a `/babelrc` file in the folder, but that's already been provided in this boilerplate for you.
+
 Then run:
 ```
 gulp
@@ -192,11 +194,10 @@ gulp
 
 The generated js converts all the ES6 modules into a flat js file ready for any browser version. It's also minified and optimized.
 
-NOTE: The above also includes jQuery framework to serve as an example of importing an external library into your project. You can simply remove it from gulpfile.js if its not required for your project, or use any other library instead.
+**NOTE:** The above also includes jQuery framework to serve as an example of importing an external library into your project. You can simply remove it from gulpfile.js if its not required for your project, or use any other library instead.
 
 
 ## GOING FORWARD:
 
-Please use the above workflow and adapt your upcoming final project into it. Test the steps and make sure that the final files being generated in  the dist folder are correct and working.
-
+### Please use the above workflow and adapt your upcoming final project into it. Test the steps and make sure that the final files being generated in  the dist folder are correct and working.
 
