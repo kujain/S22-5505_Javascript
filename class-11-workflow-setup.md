@@ -50,7 +50,7 @@ npm install --save-dev gulp
 Now install the starting packages:
 
 ```
-npm install --save-dev gulp-sass gulp-cssnano gulp-sourcemaps gulp-autoprefixer
+npm install --save-dev sass gulp-sass gulp-cssnano gulp-sourcemaps gulp-autoprefixer
 ```
 
 This will install the above 4 packages and add it to package.json file.
